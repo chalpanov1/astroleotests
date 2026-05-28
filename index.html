@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌌 Астробот: Солнце, Луна и личные планеты</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+     <div id="preloader">
+        <div class="spinner"></div>
+    </div>
+<div class="container">
+    <h1>👑 Астро-Лео 1.0</h1>
+    <p class="subtitle">Ваш внутренний мир устами звезд</p>
+
+    <div class="form-group">
+        <label>📅 Дата рождения</label>
+        <input type="date" id="birthDate">
+    </div>
+    <div class="form-group">
+        <label>⏰ Время рождения (если неизвестно, оставьте 12:00)</label>
+        <input type="time" id="birthTime" value="12:00">
+    </div>
+    <div class="form-group">
+        <label>📍 Место рождения (чтобы определить часовой пояс)</label>
+        <input type="text" id="cityInput" placeholder="Начните вводить город..." autocomplete="off">
+        <div class="suggestions" id="suggestionsList"></div>
+        <div class="city-tz-info" id="cityTzInfo"></div>
+        <div class="hint">Если Вашего населенного пункта в списке нет, выберите ближайший крупный город.</div>
+    </div>
+    <div class="form-group">
+        <label>🌐 Или выберите часовой пояс вручную</label>
+        <select id="timezoneOffset">
+            <option value="-12">UTC−12</option>
+            <option value="-11">UTC−11</option>
+            <option value="-10">UTC−10</option>
+            <option value="-9">UTC−9</option>
+            <option value="-8">UTC−8</option>
+            <option value="-7">UTC−7</option>
+            <option value="-6">UTC−6</option>
+            <option value="-5">UTC−5</option>
+            <option value="-4">UTC−4</option>
+            <option value="-3">UTC−3</option>
+            <option value="-2">UTC−2</option>
+            <option value="-1">UTC−1</option>
+            <option value="0">UTC±0</option>
+            <option value="1">UTC+1</option>
+            <option value="2">UTC+2 (Калининград)</option>
+            <option value="3" selected>UTC+3 (МСК, большинство регионов)</option>
+            <option value="4">UTC+4 (Самара и др.)</option>
+            <option value="5">UTC+5 (Екатеринбург, Пермь и др.)</option>
+            <option value="6">UTC+6 (Омск и др.)</option>
+            <option value="7">UTC+7 (Новосибирск, Красноярск и др.)</option>
+            <option value="8">UTC+8 (Иркутск и др.)</option>
+            <option value="9">UTC+9 (Якутск, Забайкалье и др.)</option>
+            <option value="10">UTC+10 (Владивосток и др.)</option>
+            <option value="11">UTC+11 (Магадан, Сахалин)</option>
+            <option value="12">UTC+12 (Камчатка, Чукотка)</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>⚧ Пол</label>
+        <div class="radio-group">
+            <label class="radio-label"><input type="radio" name="gender" value="male" checked> Мужской</label>
+            <label class="radio-label"><input type="radio" name="gender" value="female"> Женский</label>
+        </div>
+    </div>
+
+    <button id="calculateBtn">✨ Рассчитать планеты</button>
+    <div id="resultContainer" class="result" style="display:none;"></div>
+    <div id="errorContainer" class="error" style="display:none;"></div>
+
+</div>
+<footer class="site-footer">
+  <div class="footer-links">
+    <a href="offer.html">Публичная оферта</a>
+    <a href="terms.html">Услуги и цены</a>
+    <a href="payment.html">Оплата</a>
+    <a href="refund.html">Возврат</a>
+    <a href="contacts.html">Контакты и реквизиты</a>
+    <a href="pirvacy.html">Политика конфиденциальности</a>
+  </div>
+</footer>
+<script src="spacetime.min.js"></script>
+<script src="astronomy.browser.min.js"></script>
+<script src="js/cities.js"></script>
+<script src="js/astrology.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
