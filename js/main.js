@@ -19,17 +19,59 @@
     const suggestionsList = document.getElementById('suggestionsList');
     const cityTzInfo = document.getElementById('cityTzInfo');
     const timezoneOffsetSelect = document.getElementById('timezoneOffset');
+    const birthDateInput = document.getElementById('birthDate');
+    const birthTimeInput = document.getElementById('birthTime');
+
+    function formatBirthDateInput(value) {
+        const digits = value.replace(/\D/g, '').slice(0, 8);
+        let formatted = digits.slice(0, 2);
+        if (digits.length > 2) {
+            formatted += '.' + digits.slice(2, 4);
+        }
+        if (digits.length > 4) {
+            formatted += '.' + digits.slice(4, 8);
+        }
+        return formatted;
+    }
+
+    function parseBirthDate(value) {
+        const match = value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+        if (!match) return null;
+        const day = Number(match[1]);
+        const month = Number(match[2]);
+        const year = Number(match[3]);
+        const parsedDate = new Date(year, month - 1, day, 12, 0, 0);
+        const isValidDate = parsedDate.getFullYear() === year &&
+            parsedDate.getMonth() === month - 1 &&
+            parsedDate.getDate() === day;
+        if (!isValidDate) return null;
+        return { day, month, year };
+    }
+
+    function toBirthDateString(date) {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}`;
+    }
 
     // Функция обновления информации о часовом поясе
     function updateCityTzInfo() {
         const city = cityInput.dataset.selected;
         if (city && cities[city]) {
             const tz = cities[city].tz;
-            const birthDate = document.getElementById('birthDate').value;
+            const birthDate = birthDateInput.value;
             let date = new Date();
-            if (birthDate) {
-                const [year, month, day] = birthDate.split('-').map(Number);
-                date = new Date(year, month - 1, day, 12, 0, 0);
+            const parsedBirthDate = parseBirthDate(birthDate);
+            if (parsedBirthDate) {
+                date = new Date(
+                    parsedBirthDate.year,
+                    parsedBirthDate.month - 1,
+                    parsedBirthDate.day,
+                    12,
+                    0,
+                    0
+                );
             }
             const s = spacetime(date, tz);
             const offsetHours = s.timezone().current.offset;
@@ -90,8 +132,12 @@
     });
 
     // ---------- Обновление UTC при изменении даты/времени ----------
-    document.getElementById('birthDate').addEventListener('change', updateCityTzInfo);
-    document.getElementById('birthTime').addEventListener('change', updateCityTzInfo);
+    birthDateInput.addEventListener('input', function() {
+        this.value = formatBirthDateInput(this.value);
+        updateCityTzInfo();
+    });
+    birthDateInput.addEventListener('change', updateCityTzInfo);
+    birthTimeInput.addEventListener('change', updateCityTzInfo);
 
     // ---------- Ручной выбор UTC ----------
     timezoneOffsetSelect.addEventListener('change', function() {
@@ -103,8 +149,8 @@
 
     // ---------- Обработчик кнопки «Рассчитать» ----------
     document.getElementById('calculateBtn').addEventListener('click', () => {
-        const dateInput = document.getElementById('birthDate').value;
-        const timeInput = document.getElementById('birthTime').value;
+        const dateInput = birthDateInput.value;
+        const timeInput = birthTimeInput.value;
         const gender = document.querySelector('input[name="gender"]:checked').value;
 
         const errorDiv = document.getElementById('errorContainer');
@@ -113,12 +159,19 @@
         resultDiv.style.display = 'none';
 
         if (!dateInput) {
-            errorDiv.textContent = 'Пожалуйста, выберите дату рождения.';
+            errorDiv.textContent = 'Пожалуйста, введите дату рождения в формате ДД.ММ.ГГГГ.';
             errorDiv.style.display = 'block';
             return;
         }
 
-        const [year, month, day] = dateInput.split('-').map(Number);
+        const parsedBirthDate = parseBirthDate(dateInput);
+        if (!parsedBirthDate) {
+            errorDiv.textContent = 'Неверный формат даты. Используйте ДД.ММ.ГГГГ.';
+            errorDiv.style.display = 'block';
+            return;
+        }
+
+        const { year, month, day } = parsedBirthDate;
         const [hours, minutes] = timeInput ? timeInput.split(':').map(Number) : [12, 0];
 
         // Определяем часовой пояс
@@ -227,8 +280,8 @@
     });
 
     // Предзаполнение даты и времени
-    document.getElementById('birthDate').value = new Date().toISOString().split('T')[0];
-    document.getElementById('birthTime').value = '12:00';
+    birthDateInput.value = toBirthDateString(new Date());
+    birthTimeInput.value = '12:00';
     window.addEventListener('load', () => {
     const preloader = document.getElementById('preloader');
     if (preloader) {
